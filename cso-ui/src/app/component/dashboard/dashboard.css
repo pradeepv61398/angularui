@@ -1,0 +1,73 @@
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Cards */
+mat-card {
+  border-radius: 12px;
+  transition: transform 0.2s ease-in-out;
+}
+mat-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Profile Card */
+.profile-card {
+  background: #e3f2fd;
+  color: #0d47a1;
+  font-weight: 500;
+}
+.active-status {
+  color: green;
+  font-weight: bold;
+}
+.no-status {
+  color: red;
+  font-weight: bold;
+}
+
+/* Quick Actions */
+.actions-buttons button {
+  margin-right: 15px;
+  margin-top: 10px;
+}
+.actions-card {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+/* Policies */
+.policies-card {
+  background: #f1f8e9;
+}
+.policy-item {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-left: 5px solid #2196f3;
+  border-radius: 5px;
+  background: #ffffff;
+}
+.policy-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.policy-number {
+  font-style: italic;
+  color: gray;
+}
+.policy-item mat-chip {
+  margin-left: 10px;
+}
+.no-policies {
+  text-align: center;
+  font-style: italic;
+  color: gray;
+}

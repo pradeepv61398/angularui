@@ -1,0 +1,82 @@
+<div class="policy-container">
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Create New Policy</mat-card-title>
+    </mat-card-header>
+    <mat-divider class="spaced-divider"></mat-divider>
+
+    <mat-card-content>
+      <form [formGroup]="policyForm" (ngSubmit)="onSubmit()" class="policy-form">
+
+        <!-- First Row -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Policy Number</mat-label>
+            <input matInput formControlName="policyNumber" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Policy Name</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
+        </div>
+
+        <!-- Second Row -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Policy Type</mat-label>
+            <mat-select formControlName="type">
+              <mat-option value="Health">Health</mat-option>
+              <mat-option value="Life">Life</mat-option>
+              <mat-option value="Car">Car</mat-option>
+              <mat-option value="Travel">Travel</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Coverage Amount</mat-label>
+            <input matInput type="number" formControlName="coverage" />
+          </mat-form-field>
+        </div>
+
+        <!-- Third Row -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Premium</mat-label>
+            <input matInput type="number" formControlName="premium" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Term (Years)</mat-label>
+            <input matInput type="number" formControlName="term" />
+          </mat-form-field>
+        </div>
+
+        <!-- Description -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="3" formControlName="description"></textarea>
+        </mat-form-field>
+
+        <!-- Buttons -->
+        <div class="button-row">
+          <button mat-raised-button color="primary" type="submit" [disabled]="policyForm.invalid">
+            <mat-icon>add_circle</mat-icon> Create Policy
+          </button>
+          <button mat-stroked-button color="warn" type="reset" (click)="policyForm.reset()">
+            <mat-icon>refresh</mat-icon> Reset
+          </button>
+          <button mat-stroked-button color="accent" routerLink="/dashboard" class="back-button">
+            <mat-icon>dashboard</mat-icon> Back to Dashboard
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="message" class="message-card success">
+    <mat-card-content>
+      <mat-icon>check_circle</mat-icon> {{ message }}
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,69 @@
+<mat-toolbar color="primary">
+  <span>Policy Dashboard</span>
+  <span class="spacer"></span>
+  <span>Welcome, {{ LoggedinUser?.name }}</span>
+</mat-toolbar>
+
+<div class="dashboard-container">
+
+  <!-- User Profile Card -->
+  <mat-card class="profile-card mat-elevation-z6">
+    <mat-card-header>
+      <mat-card-title>User Profile</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <p><strong>Name:</strong> {{ LoggedinUser?.name }}</p>
+      <p><strong>Email:</strong> {{ LoggedinUser?.email }}</p>
+      <p><strong>Phone:</strong> {{ LoggedinUser?.phoneNumber }}</p>
+      <p><strong>Policy Status:</strong> 
+        <span [ngClass]="policies.length > 0 ? 'active-status' : 'no-status'">
+          {{ policies.length > 0 ? 'Active' : 'No Policies' }}
+        </span>
+      </p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Quick Actions Card -->
+  <mat-card class="actions-card mat-elevation-z6">
+    <mat-card-header>
+      <mat-card-title>Quick Actions</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content class="actions-buttons">
+      <button mat-raised-button color="primary" routerLink="/create-policy">
+        <mat-icon>add_circle</mat-icon> Create Policy
+      </button>
+      <button mat-raised-button color="accent" routerLink="/view-policy">
+        <mat-icon>visibility</mat-icon> View All Policies
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Policies List Card -->
+  <mat-card class="policies-card mat-elevation-z6" *ngIf="policies.length > 0; else noPolicies">
+    <mat-card-header>
+      <mat-card-title>My Policies</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <div *ngFor="let policy of policies" class="policy-item mat-elevation-z2">
+        <p class="policy-header">
+          <strong>{{ policy.name }}</strong> 
+          <span class="policy-number">({{ policy.policyNumber }})</span>
+          <mat-chip color="primary" selected>{{ policy.type }}</mat-chip>
+        </p>
+        <p>Coverage: ₹{{ policy.coverage | number }}, Premium: ₹{{ policy.premium | number }}, Term: {{ policy.term }} yrs</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <ng-template #noPolicies>
+    <mat-card class="policies-card mat-elevation-z6 no-policies">
+      <mat-card-content>
+        <p>No policies purchased yet. Start by creating one!</p>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+
+</div>
