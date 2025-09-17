@@ -3,7 +3,6 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh; /* full screen vertically */
-  background-color: #f5f5f5; /* light grey background */
 }
 
 .register-card {
@@ -77,7 +76,7 @@ button {
 /* Input text color */
 .mat-input-element {
   color: #000;  /* Make text black */
-  background-color: white; /* Solid background */
+  background-color: rgb(172, 107, 107); /* Solid background */
 }
 
 /* Datepicker toggle icon color */

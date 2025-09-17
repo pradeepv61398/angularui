@@ -1,14 +1,13 @@
 
-<mat-toolbar color="primary" class="dashboard-toolbar">
+<div class="policy-container">
   <h2>All Policies</h2>
-  <span class="spacer"></span>
-  <span><button mat-stroked-button color="accent" routerLink="/dashboard">
+  <!-- Place this at the top of your component HTML -->
+<div class="top-right-button">
+  <button mat-stroked-button color="accent" routerLink="/dashboard">
     <mat-icon>dashboard</mat-icon>
     Back to Dashboard
-  </button></span>
-</mat-toolbar>
-
-<div class="policy-container">
+  </button>
+</div>
 
 
   <table mat-table [dataSource]="policies" class="mat-elevation-z8 full-width">

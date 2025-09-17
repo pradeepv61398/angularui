@@ -1,3 +1,4 @@
+
 <div class="login-container">
   <h2>{{ title }}</h2>
 
@@ -36,7 +37,17 @@
     <!-- Submit Button -->
     <button type="submit" [disabled]="LoginForm.invalid">Login</button>
   </form>
+  <div class="header-container">
+  <span>Don't have an account?</span>
+  <a routerLink="/register" class="register-link">Register</a>
+</div>
 
+   
   <!-- Message -->
   <p class="message" *ngIf="message">{{ message }}</p>
+
 </div>
+<!-- <div class="login-container">
+  <div class="logo-container">
+    <img src="assets/images/hello.png" alt="Company Logo" class="logo">
+  </div> -->

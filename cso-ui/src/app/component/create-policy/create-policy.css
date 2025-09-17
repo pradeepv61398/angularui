@@ -74,3 +74,18 @@ button.mat-raised-button:hover {
 .policy-form .form-row:first-child {
   margin-top: 10px;
 }
+.top-right-button {
+  position: absolute; /* Fixes it relative to nearest positioned ancestor */
+  top: 16px;          /* Distance from top of page */
+  right: 16px;        /* Distance from right of page */
+  z-index: 1000;      /* Ensures it’s above other content */
+}
+
+@media (max-width: 768px) {
+  .top-right-button {
+    top: 8px;
+    right: 8px;
+    width: auto;
+    font-size: 0.9rem;
+  }
+}

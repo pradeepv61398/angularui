@@ -1,0 +1,122 @@
+
+<mat-card class="claim-card">
+     <button mat-stroked-button color="primary" routerLink="/dashboard" class="back-button">
+        <mat-icon>dashboard</mat-icon> Back to Dashboard
+    </button>
+    <h2>Submit Your Insurance Claim</h2>
+    <form [formGroup]="claimForm" (ngSubmit)="submitClaim()">
+
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Policy</mat-label>
+            <mat-select formControlName="customerPolicyId">
+                <mat-option *ngFor="let policy of customerPolicies" [value]="policy.id">
+                    {{policy.policy.policyNumber}} - {{policy.policy.type}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Claim Type -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Claim Type</mat-label>
+            <mat-select formControlName="claimType">
+                <mat-option *ngFor="let type of claimTypes" [value]="type">{{type}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="claimForm.get('claimType')?.hasError('required')">
+                Claim Type is required
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Claim Amount -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Claim Amount</mat-label>
+            <input matInput type="number" formControlName="amount" placeholder="Enter Claim Amount">
+            <mat-error *ngIf="claimForm.get('amount')?.hasError('required')">
+                Claim Amount is required
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Reason -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Reason</mat-label>
+            <input matInput formControlName="reason" placeholder="Reason for Claim">
+        </mat-form-field>
+
+        <!-- Health Claim Fields -->
+        <div *ngIf="claimForm.get('claimType')?.value === 'HEALTH'" class="claim-section">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Hospital Name</mat-label>
+                <input matInput formControlName="hospitalName">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Admission Date</mat-label>
+                <input matInput type="date" formControlName="admissionDate">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Discharge Date</mat-label>
+                <input matInput type="date" formControlName="dischargeDate">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Patient Name</mat-label>
+                <input matInput formControlName="patientName">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Doctor Name</mat-label>
+                <input matInput formControlName="doctorName">
+            </mat-form-field>
+        </div>
+
+        <!-- Car Claim Fields -->
+        <div *ngIf="claimForm.get('claimType')?.value === 'CAR'" class="claim-section">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Vehicle Number</mat-label>
+                <input matInput formControlName="vehicleNumber">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Accident Date</mat-label>
+                <input matInput type="date" formControlName="accidentDate">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Location</mat-label>
+                <input matInput formControlName="location">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Garage Name</mat-label>
+                <input matInput formControlName="garageName">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>FIR Number</mat-label>
+                <input matInput formControlName="firNumber">
+            </mat-form-field>
+        </div>
+
+        <!-- Life Claim Fields -->
+        <div *ngIf="claimForm.get('claimType')?.value === 'LIFE'" class="claim-section">
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nominee Name</mat-label>
+                <input matInput formControlName="nomineeName">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Relationship</mat-label>
+                <input matInput formControlName="relationship">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Death Certificate Number</mat-label>
+                <input matInput formControlName="deathCertificateNumber">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Date of Death</mat-label>
+                <input matInput type="date" formControlName="dateOfDeath">
+            </mat-form-field>
+        </div>
+
+        <button mat-raised-button  color="primary" type="submit">Submit Claim</button>
+        
+
+
+
+        <div class="message" *ngIf="message">{{message}}</div>
+
+    </form>
+    
+
+</mat-card>

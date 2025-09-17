@@ -5,10 +5,13 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../service/authservice';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-view-policy',
-  imports: [MatTableModule,CommonModule,MatChipsModule,MatIconModule],
+  imports: [MatTableModule,MatToolbarModule,CommonModule,MatChipsModule,MatIconModule,RouterLink,RouterLinkActive],
   templateUrl: './view-policy.html',
   styleUrl: './view-policy.css'
 })
@@ -16,7 +19,14 @@ export class ViewPolicy {
 
  policies: Policy[] = []; 
  displayedColumns: string[] = ['policyNumber', 'name', 'type', 'coverage', 'premium', 'term', 'description','buy'];
-  constructor(private policyService: PolicyService){}
+ LoggedinUser!: any;
+  constructor(private policyService: PolicyService,private authService: AuthService){
+    this.authService.loadCurrentUser();
+     this.authService.currentUser$.subscribe(user => {
+      this.LoggedinUser = user;
+  }
+)
+  }
 ngOnInit(): void {
   this.loadPolicies();
 }
@@ -43,7 +53,7 @@ getPolicyColor(type: string): 'primary' | 'accent' | 'warn' {
 selectedPolicyId!: number; // optional if using dropdown
 
 buyPolicy(policyId: number) {
-  this.policyService.buyPolicy(policyId).subscribe({
+  this.policyService.buyPolicy(this.LoggedinUser.id,policyId).subscribe({
     next: (res: any) => {
       alert('Policy purchased successfully!');
       this.loadPolicies(); // reload policies if needed

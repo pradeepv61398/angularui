@@ -70,3 +70,34 @@ button:hover:not(:disabled) {
   font-weight: bold;
   color: green;
 }
+.header-container {
+  display: flex;
+  justify-content: flex-start; /* pushes content to the right */
+  align-items: center;       /* vertically center */
+  gap: 100px;                 /* space between text and link */
+  margin-top: 10px;
+}
+
+.register-link {
+  text-decoration: none;
+  color: #1976d2; /* Angular Material primary color */
+  font-weight: 500;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}
+
+.logo {
+  display: flexbox;
+  width: 150px;      /* adjust width */
+  height: auto;      /* maintain aspect ratio */
+  max-width: 100%;   /* responsive */
+  border-radius: 8px; /* optional, rounded corners */
+}
+
+.logo-container {
+  display: flexbox;
+  text-align: center; /* optional, centers the logo */
+  margin-bottom: 10px;
+}

@@ -1,14 +1,14 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" class="dashboard-toolbar">
   <span>Policy Dashboard</span>
   <span class="spacer"></span>
-  <span>Welcome, {{ LoggedinUser?.name }}</span>
+  <span class="user-welcome">Welcome, {{ LoggedinUser?.name }}</span>
 </mat-toolbar>
 
 <div class="dashboard-container">
 
   <!-- User Profile Card -->
   <mat-card class="profile-card mat-elevation-z6">
-    <mat-card-header>
+    <mat-card-header class="profile-header">
       <mat-card-title>User Profile</mat-card-title>
     </mat-card-header>
     <mat-divider></mat-divider>
@@ -35,7 +35,10 @@
         <mat-icon>add_circle</mat-icon> Create Policy
       </button>
       <button mat-raised-button color="accent" routerLink="/view-policy">
-        <mat-icon>visibility</mat-icon> View All Policies
+        <mat-icon>visibility</mat-icon> View Policies
+      </button>
+      <button mat-raised-button color="warn" routerLink="/claim-submission">
+        <mat-icon>assignment</mat-icon> Claim Submission
       </button>
     </mat-card-content>
   </mat-card>
@@ -47,23 +50,59 @@
     </mat-card-header>
     <mat-divider></mat-divider>
     <mat-card-content>
-      <div *ngFor="let policy of policies" class="policy-item mat-elevation-z2">
+      <div *ngFor="let item of policies" 
+           [class.selected]="item.id === selectedPolicyId"
+           class="policy-item mat-elevation-z2" 
+           (click)="loadPayments(item.id)">
         <p class="policy-header">
-          <strong>{{ policy.name }}</strong> 
-          <span class="policy-number">({{ policy.policyNumber }})</span>
-          <mat-chip color="primary" selected>{{ policy.type }}</mat-chip>
+          <strong>{{ item.policy.name }}</strong> 
+          <span class="policy-number">({{ item.policy.policyNumber }})</span>
+          <mat-chip color="primary" selected>
+            {{ item.status }}
+          </mat-chip>
         </p>
-        <p>Coverage: ₹{{ policy.coverage | number }}, Premium: ₹{{ policy.premium | number }}, Term: {{ policy.term }} yrs</p>
+        <p>
+          Coverage: ₹{{ item.policy.coverage | number }}, 
+          Premium: ₹{{ item.policy.premium | number }}, 
+          Term: {{ item.policy.term }} yrs
+        </p>
+        <p>
+          Start: {{ item.startDate | date:'mediumDate' }}, 
+          End: {{ item.endDate | date:'mediumDate' }}
+        </p>
       </div>
     </mat-card-content>
   </mat-card>
 
   <ng-template #noPolicies>
-    <mat-card class="policies-card mat-elevation-z6 no-policies">
+    <mat-card class="no-policies mat-elevation-z4">
       <mat-card-content>
         <p>No policies purchased yet. Start by creating one!</p>
       </mat-card-content>
     </mat-card>
   </ng-template>
+</div>
 
+<!-- Payments -->
+<div class="payments-container" *ngIf="selectedPolicyPayments.length > 0">
+  <mat-card class="mat-elevation-z6 payment-list">
+    <mat-card-header>
+      <mat-card-title>Installments for Selected Policy</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <mat-card-content>
+      <div *ngFor="let p of selectedPolicyPayments" class="payment-card mat-elevation-z2">
+        <p>
+          Year: {{p.installmentYear}} | Amount: ₹{{p.amount | number}} | Due: {{p.dueDate | date:'mediumDate'}}
+          <span [style.color]="getPaymentStatusColor(p.status)">({{p.status}})</span>
+        </p>
+        <button mat-raised-button color="primary" [disabled]="p.paid" (click)="payInstallment(p.id)">
+          Pay Now
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div *ngIf="selectedPolicyPayments.length === 0 && selectedPolicyId" class="no-payments">
+  <p>No installments available for selected policy.</p>
 </div>

@@ -1,73 +1,121 @@
-.dashboard-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
+/* Global Dashboard Styles */
+body {
+  background-color: #f4f6f8;
+  font-family: 'Roboto', sans-serif;
 }
 
+/* Toolbar */
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Spacing helper */
 .spacer {
   flex: 1 1 auto;
+}
+
+/* Dashboard container */
+.dashboard-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px;
 }
 
 /* Cards */
 mat-card {
   border-radius: 12px;
-  transition: transform 0.2s ease-in-out;
-}
-mat-card:hover {
-  transform: translateY(-5px);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
 }
 
 /* Profile Card */
 .profile-card {
-  background: #e3f2fd;
-  color: #0d47a1;
-  font-weight: 500;
-}
-.active-status {
-  color: green;
-  font-weight: bold;
-}
-.no-status {
-  color: red;
-  font-weight: bold;
+  flex: 1 1 300px;
+  min-width: 300px;
 }
 
-/* Quick Actions */
-.actions-buttons button {
-  margin-right: 15px;
-  margin-top: 10px;
-}
+/* Actions Card */
 .actions-card {
-  background: #fff3e0;
-  color: #ef6c00;
+  flex: 1 1 300px;
+  min-width: 300px;
 }
 
-/* Policies */
+.actions-buttons button {
+  margin-right: 8px;
+  margin-top: 8px;
+}
+
+/* Policies Card */
 .policies-card {
-  background: #f1f8e9;
+  flex: 2 1 600px;
+  min-width: 400px;
+  max-height: 600px;
+  overflow-y: auto;
 }
+
 .policy-item {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-left: 5px solid #2196f3;
-  border-radius: 5px;
-  background: #ffffff;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: #fff;
 }
+
+.policy-item:hover {
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.policy-item.selected {
+  border-left: 4px solid #1976d2;
+  background-color: #e3f2fd;
+}
+
 .policy-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
+
 .policy-number {
-  font-style: italic;
-  color: gray;
+  font-size: 0.9rem;
+  color: #555;
 }
-.policy-item mat-chip {
-  margin-left: 10px;
+
+.policy-details,
+.policy-dates {
+  font-size: 0.85rem;
+  color: #333;
 }
-.no-policies {
-  text-align: center;
+
+/* Payments */
+.payments-container {
+  padding: 16px;
+}
+
+.payment-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.payment-card {
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.no-policies-text,
+.no-payments {
+  color: #888;
   font-style: italic;
-  color: gray;
 }
