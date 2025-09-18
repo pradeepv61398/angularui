@@ -8,7 +8,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Dashboard } from '../dashboard/dashboard';
 import { AuthService } from '../../service/authservice';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive } from '@angular/router';
@@ -28,82 +27,77 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
     MatIconModule,
     RouterLink,
     RouterLinkActive
-    
-    
   ],
   templateUrl: './claim-submission-component.html',
   styleUrls: ['./claim-submission-component.css'],
-    providers:[AuthService]
-
+  providers: [AuthService]
 })
 export class ClaimSubmissionComponent {
   claimForm!: FormGroup;
   claimTypes = ['HEALTH', 'CAR', 'LIFE'];
-  customerPolicies: any[] = []; // fetched from backend
+  customerPolicies: any[] = [];
   message!: string;
   LoggedinUser!: any;
+selectedFile: File | null = null;
 
-
-  constructor(private fb: FormBuilder, private http: HttpClient,private authService: AuthService) {}
+  constructor(private fb: FormBuilder, private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit(): void {
-     this.authService.loadCurrentUser();
+    this.authService.loadCurrentUser();
     this.authService.currentUser$.subscribe(user => {
       this.LoggedinUser = user;
       if (user?.id) {
-                this.http.get<any[]>(`http://localhost:8080/api/customer-policies/${user.id}`, { withCredentials: true })
-  .subscribe({
-    next: (data) => this.customerPolicies = data,
-    error: (err) => console.error('Error fetching customer policies', err)
-  });
-        
+        this.http.get<any[]>(`http://localhost:8080/api/customer-policies/${user.id}`, { withCredentials: true })
+          .subscribe({
+            next: data => this.customerPolicies = data,
+            error: err => console.error('Error fetching customer policies', err)
+          });
       }
-
-
-      
-    });
-    // Initialize form
-    
-    this.claimForm = this.fb.group({
-      customerPolicyId: ['', Validators.required], // Updated
-      claimType: ['', Validators.required],
-      amount: ['', Validators.required],
-      reason: [''],
-      // Health fields
-      hospitalName: [''],
-      admissionDate: [''],
-      dischargeDate: [''],
-      patientName: [''],
-      doctorName: [''],
-      // Car fields
-      vehicleNumber: [''],
-      accidentDate: [''],
-      location: [''],
-      garageName: [''],
-      firNumber: [''],
-      // Life fields
-      nomineeName: [''],
-      relationship: [''],
-      deathCertificateNumber: [''],
-      dateOfDeath: ['']
     });
 
-    // Fetch customer policies for dropdown
+  this.claimForm = this.fb.group({
+  customerPolicyId: ['', Validators.required],
+  claimType: ['', Validators.required],
+  amount: ['', Validators.required],
+  reason: [''],
+  // Health fields
+  hospitalName: [''],
+  admissionDate: [''],
+  dischargeDate: [''],
+  patientName: [''],
+  doctorName: [''],
+  // Car fields
+  vehicleNumber: [''],
+  accidentDate: [''],
+  location: [''],
+  garageName: [''],
+  firNumber: [''],
+  // Life fields
+  nomineeName: [''],
+  relationship: [''],
+  deathCertificateNumber: [''],
+  dateOfDeath: ['']
+});
 
-
-    // Watch for claimType changes
     this.claimForm.get('claimType')?.valueChanges.subscribe(type => {
       this.setValidatorsByType(type);
     });
 
-    // Watch reason for FIR requirement in Car claims
     this.claimForm.get('reason')?.valueChanges.subscribe(reason => {
       this.updateFIRValidation(reason);
     });
   }
 
+  // Handle file selection
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.claimForm.patchValue({ file: file });
+    }
+  }
+
   setValidatorsByType(type: string) {
-    // Reset all
     [
       'hospitalName', 'admissionDate', 'dischargeDate', 'patientName', 'doctorName',
       'vehicleNumber', 'accidentDate', 'location', 'garageName', 'firNumber',
@@ -137,25 +131,51 @@ export class ClaimSubmissionComponent {
     }
   }
 
-  submitClaim() {
-    if (this.claimForm.valid) {
-      console.log('Submitting claim:', this.claimForm.value);
+selectedFiles: File[] = []; // array to store multiple files
 
-      this.http.post('http://localhost:8080/claims/submit', this.claimForm.value, { withCredentials: true })
-        .subscribe({
-          next: (response) => {
-            console.log('Response:', response);
-            this.message = 'Claim submitted successfully!';
-            this.claimForm.reset();
-          },
-          error: (error) => {
-            console.error('Error submitting claim:', error);
-            this.message = 'Failed to submit claim. Please try again.';
-          }
-        });
-    } else {
-      console.log('Form is invalid');
-      this.claimForm.markAllAsTouched();
-    }
+// File change handler
+onFilesSelected(event: any) {
+  const files: FileList = event.target.files;
+  this.selectedFiles = [];
+  for (let i = 0; i < files.length; i++) {
+    this.selectedFiles.push(files[i]);
   }
+}
+
+submitClaim() {
+  if (this.claimForm.valid) {
+
+    const claimData = { ...this.claimForm.value };
+    delete claimData['file']; // remove file key if it exists
+
+    const formData = new FormData();
+
+    // Append claim JSON as a Blob
+    formData.append('claim', new Blob([JSON.stringify(claimData)], { type: 'application/json' }));
+
+    // Append all selected files
+    this.selectedFiles.forEach(file => {
+      formData.append('files', file); // 'files' must match backend @RequestPart("files")
+    });
+
+    this.http.post('http://localhost:8080/claims/submit', formData, { withCredentials: true })
+      .subscribe({
+        next: (response) => {
+          this.message = 'Claim submitted successfully!';
+          this.claimForm.reset();
+          this.selectedFiles = [];
+        },
+        error: (error) => {
+          console.error('Error submitting claim:', error);
+          this.message = 'Failed to submit claim. Please try again.';
+        }
+      });
+
+  } else {
+    this.claimForm.markAllAsTouched();
+  }
+}
+
+
+
 }

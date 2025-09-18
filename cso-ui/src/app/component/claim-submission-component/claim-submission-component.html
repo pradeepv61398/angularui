@@ -108,6 +108,9 @@
                 <input matInput type="date" formControlName="dateOfDeath">
             </mat-form-field>
         </div>
+       <!-- <input type="file" id="fileInput" (change)="onFileSelected($event)" /> -->
+
+<input type="file"   (change)="onFilesSelected($event)" multiple>
 
         <button mat-raised-button  color="primary" type="submit">Submit Claim</button>
         
