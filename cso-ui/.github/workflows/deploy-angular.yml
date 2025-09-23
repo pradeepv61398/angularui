@@ -11,18 +11,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22.x'
 
+      # 3️⃣ Install Angular dependencies
       - name: Install dependencies
         run: npm install
         working-directory: ./cso-ui
 
+      # 4️⃣ Build Angular app (production)
       - name: Build Angular app
         run: npm run build -- --configuration production
         working-directory: ./cso-ui
@@ -32,13 +36,9 @@ jobs:
     needs: build
 
     steps:
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}   # or AZURE_WEBAPP_PUBLISH_PROFILE if using publish profile
-
-      - name: Deploy Angular to Azure
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'angularui'             # Your App Service name
-          package: ./cso-ui/dist/cso-ui     # Adjust if your Angular output folder differs
+          app-name: 'angularui'  # Replace with your App Service name
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ./customer/dist/customer
