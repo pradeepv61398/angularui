@@ -1,37 +1,45 @@
-name: Deploy Angular App to Azure
+name: Build and deploy Angular app to Azure Web App
 
 on:
   push:
     branches:
-      - main   # or your deployment branch
+      - main
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      # 1️⃣ Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # 2. Setup Node
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: '22.x'
 
-      # 3. Install dependencies
-      - name: Install Dependencies
-        run: npm install --prefix cso-ui
+      # 3️⃣ Install Angular dependencies
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./cso-ui
 
-      # 4. Build Angular App (Angular 17+ puts build in dist/cso-ui/browser)
-      - name: Build Angular App
-        run: npm run build --prefix cso-ui -- --configuration production
+      # 4️⃣ Build Angular app (production)
+      - name: Build Angular app
+        run: npm run build -- --configuration production
+        working-directory: ./cso-ui
 
-      # 5️⃣ Login to Azure using Publish Profile
-      - name: Azure Login
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      # 5️⃣ Deploy to Azure Web App
+      - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'angularui'  # Replace with your Azure App Service name
+          app-name: 'angularui-e3fqeahrg5b5fbfm'   # ✅ exact App Service name
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./cso-ui/dist/cso-ui
+          package: ./cso-ui/dist/cso-ui/browser   # ✅ correct build folder
