@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./customer
+        working-directory: ./cso-ui
 
       - name: Build Angular app
         run: npm run build -- --configuration production
@@ -37,4 +37,4 @@ jobs:
         with:
           app-name: 'angularui'  # Replace with your App Service name
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./customer/dist/customer
+          package: ./cso-ui/dist/cso-ui
