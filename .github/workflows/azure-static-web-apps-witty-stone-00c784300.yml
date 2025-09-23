@@ -1,4 +1,4 @@
-name: Deploy Angular app to Azure Static Web Apps
+name: Build and Deploy Angular App to Azure Static Web App
 
 on:
   push:
@@ -11,30 +11,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
+      # 1️⃣ Checkout the repo
       - uses: actions/checkout@v4
 
-      # 2. Setup Node.js
-      - uses: actions/setup-node@v3
+      # 2️⃣ Setup Node.js 22
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: 22
 
-      # 3. Install dependencies
+      # 3️⃣ Install dependencies
       - name: Install dependencies
-        run: npm install
-        working-directory: ./cso-ui
+        run: npm install --prefix cso-ui
 
-      # 4. Build Angular app
+      # 4️⃣ Build Angular app (production)
       - name: Build Angular app
-        run: npm run build -- --configuration production
-        working-directory: ./cso-ui
+        run: npm run build --prefix cso-ui -- --configuration production
 
-      # 5. Deploy to Azure Static Web Apps
-      - name: Deploy to Azure Static Web Apps
+      # 5️⃣ Deploy to Azure Static Web App
+      - name: Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Needed for PR comments
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # optional
           action: "upload"
-          app_location: "cso-ui"
-          output_location: "dist/cso-ui/browser"
+          app_location: "cso-ui/dist/cso-ui/browser"
+          output_location: ""
