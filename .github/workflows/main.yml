@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,21 +19,21 @@ jobs:
         with:
           node-version: '22.x'
 
-      # 3️⃣ Install Angular CLI
+      # 3️⃣ Install Angular CLI globally
       - name: Install Angular CLI
         run: npm install -g @angular/cli
 
-      # 4️⃣ Install project dependencies
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
         working-directory: ./cso-ui
 
-      # 5️⃣ Build Angular app (production)
+      # 5️⃣ Build Angular app
       - name: Build Angular app
         run: ng build --configuration production
         working-directory: ./cso-ui
 
-      # 6️⃣ Add web.config for Angular routing
+      # 6️⃣ Add web.config for routing
       - name: Add web.config for Azure
         run: |
           cat <<EOL > ./cso-ui/dist/cso-ui/web.config
@@ -59,10 +59,27 @@ jobs:
           </configuration>
           EOL
 
-      # 7️⃣ Deploy to Azure Web App
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+      # 7️⃣ Upload build artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: angular-dist
+          path: ./cso-ui/dist/cso-ui
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      # 1️⃣ Download artifact
+      - uses: actions/download-artifact@v4
+        with:
+          name: angular-dist
+          path: ./dist
+
+      # 2️⃣ Deploy to Azure Web App
+      - uses: azure/webapps-deploy@v3
         with:
           app-name: 'angularui'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./cso-ui/dist/cso-ui
+          package: ./dist
