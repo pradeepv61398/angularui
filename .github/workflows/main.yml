@@ -77,9 +77,8 @@ jobs:
           name: angular-dist
           path: ./dist
 
-      # 2️⃣ Deploy to Azure Web App
-      - uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'angularui'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./dist
+     - uses: azure/webapps-deploy@v3
+  with:
+    app-name: 'angularui'
+    publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+    package: ./dist/browser
