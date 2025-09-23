@@ -1,4 +1,4 @@
-name: Build & Deploy Angular App to Azure
+name: Build and deploy Angular app to Azure Web App
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your repo
+      # 1️⃣ Checkout the code
       - uses: actions/checkout@v4
 
       # 2️⃣ Setup Node.js
@@ -33,8 +33,8 @@ jobs:
         run: ng build --configuration production
         working-directory: ./cso-ui
 
-      # 6️⃣ Add web.config for Azure routing
-      - name: Add web.config for Azure
+      # 6️⃣ Add web.config to handle Angular routes on Azure
+      - name: Add web.config for Azure routing
         run: |
           cat <<EOL > ./cso-ui/dist/cso-ui/browser/web.config
           <?xml version="1.0" encoding="utf-8"?>
@@ -59,10 +59,27 @@ jobs:
           </configuration>
           EOL
 
-      # 7️⃣ Deploy to Azure Web App directly
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+      # 7️⃣ Upload browser folder as artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
-          app-name: 'angularui'   # Your App Service name
+          name: angular-dist
+          path: ./cso-ui/dist/cso-ui/browser
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      # 1️⃣ Download the build artifact
+      - uses: actions/download-artifact@v4
+        with:
+          name: angular-dist
+          path: ./dist
+
+      # 2️⃣ Deploy to Azure Web App
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'angularui'  # Your Azure App Service name
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./cso-ui/dist/cso-ui/browser
+          package: ./dist
