@@ -1,70 +1,38 @@
-name: Build and deploy Angular app to Azure Web App
+name: Deploy Angular App to Azure
 
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main   # or your deployment branch
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your code
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # 1. Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node.js
+      # 2. Setup Node
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22.x'
+          node-version: '18'
 
-      # 3️⃣ Install Angular CLI globally
-      - name: Install Angular CLI
-        run: npm install -g @angular/cli
+      # 3. Install dependencies
+      - name: Install Dependencies
+        run: npm install --prefix cso-ui
 
-      # 4️⃣ Install dependencies
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./cso-ui
+      # 4. Build Angular App (Angular 17+ puts build in dist/cso-ui/browser)
+      - name: Build Angular App
+        run: npm run build --prefix cso-ui -- --configuration production
 
-      # 5️⃣ Build Angular app for production
-      - name: Build Angular app
-        run: ng build --configuration production
-        working-directory: ./cso-ui
-
-      # 6️⃣ Add web.config for Azure routing
-      - name: Add web.config
-        run: |
-          cat <<EOL > ./cso-ui/dist/cso-ui/web.config
-          <?xml version="1.0" encoding="utf-8"?>
-          <configuration>
-            <system.webServer>
-              <rewrite>
-                <rules>
-                  <rule name="Angular Routes" stopProcessing="true">
-                    <match url=".*" />
-                    <conditions logicalGrouping="MatchAll">
-                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
-                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
-                    </conditions>
-                    <action type="Rewrite" url="index.html" />
-                  </rule>
-                </rules>
-              </rewrite>
-              <staticContent>
-                <mimeMap fileExtension=".json" mimeType="application/json" />
-              </staticContent>
-            </system.webServer>
-          </configuration>
-          EOL
-
-      # 7️⃣ Deploy to Azure Web App
-      - name: Deploy to Azure
-        uses: azure/webapps-deploy@v3
+      # 5. Deploy to Azure Web App
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
         with:
-          app-name: 'angularui'  # <-- Your Azure Web App name
+          app-name: angularui-e3fqeahrg5b5fbfm   # your Azure Web App name
+          slot-name: Production
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./cso-ui/dist/cso-ui
+          package: ./cso-ui/dist/cso-ui/browser
