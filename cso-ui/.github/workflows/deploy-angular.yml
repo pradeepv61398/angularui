@@ -21,7 +21,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./customer
+        working-directory: ./cso-ui
 
       - name: Build Angular app
         run: npm run build -- --configuration production
@@ -32,9 +32,13 @@ jobs:
     needs: build
 
     steps:
-      - name: Deploy to Azure Web App
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}   # or AZURE_WEBAPP_PUBLISH_PROFILE if using publish profile
+
+      - name: Deploy Angular to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'angularui'  # Replace with your App Service name
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./customer/dist/customer
+          app-name: 'angularui'             # Your App Service name
+          package: ./cso-ui/dist/cso-ui     # Adjust if your Angular output folder differs
