@@ -33,10 +33,10 @@ jobs:
         run: ng build --configuration production
         working-directory: ./cso-ui
 
-      # 6️⃣ Add web.config for routing
+      # 6️⃣ Add web.config for Azure routing
       - name: Add web.config for Azure
         run: |
-          cat <<EOL > ./cso-ui/dist/cso-ui/web.config
+          cat <<EOL > ./cso-ui/dist/cso-ui/browser/web.config
           <?xml version="1.0" encoding="utf-8"?>
           <configuration>
             <system.webServer>
@@ -59,12 +59,12 @@ jobs:
           </configuration>
           EOL
 
-      # 7️⃣ Upload build artifact
+      # 7️⃣ Upload build artifact (browser folder contents)
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: angular-dist
-          path: ./cso-ui/dist/cso-ui
+          path: ./cso-ui/dist/cso-ui/browser
 
   deploy:
     runs-on: ubuntu-latest
