@@ -11,30 +11,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # 1️⃣ Checkout code
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      # 2️⃣ Setup Node.js
+      - uses: actions/setup-node@v3
         with:
           node-version: '22.x'
 
+      # 3️⃣ Install Angular CLI globally
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      # 4️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
         working-directory: ./cso-ui
 
+      # 5️⃣ Build Angular app
       - name: Build Angular app
-        run: npm run build -- --configuration production
+        run: ng build --configuration production
         working-directory: ./cso-ui
+
+      # 6️⃣ Upload build artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: angular-dist
+          path: ./cso-ui/dist/cso-ui
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
 
     steps:
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+      # 1️⃣ Download artifact
+      - uses: actions/download-artifact@v4
         with:
-          app-name: 'angularui'  # Replace with your App Service name
+          name: angular-dist
+          path: ./dist
+
+      # 2️⃣ Deploy to Azure Web App
+      - uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'angularui'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./cso-ui/dist/cso-ui
+          package: ./dist/cso-ui
