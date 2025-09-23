@@ -41,7 +41,7 @@ export class CreatePolicy {
 
 onSubmit() {
   if(this.policyForm.valid){
-     this.policyService.cretepolciy(this.policyForm.value).subscribe(
+     this.policyService.createPolicy(this.policyForm.value).subscribe(
       {
         next:(Response)=> {console.log(Response),
          this.message = 'Policy created successfully!';

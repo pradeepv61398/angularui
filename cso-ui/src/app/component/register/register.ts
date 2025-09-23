@@ -47,7 +47,7 @@ export class Register {
 
 onSubmit() {
   if (this.Registeration.valid) {
-    this.http.post('http://localhost:8080/api/register', this.Registeration.value)
+    this.http.post('https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/register', this.Registeration.value)
       .subscribe(
         response => {
           console.log('User registered successfully', response);

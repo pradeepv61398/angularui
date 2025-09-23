@@ -24,7 +24,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   loadCurrentUser() {
-    this.http.get<User>('http://localhost:8080/api/me', { withCredentials: true })
+    this.http.get<User>('https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/me', { withCredentials: true })
       .subscribe({
         next: user => this.currentUserSubject.next(user),
         error: err => {

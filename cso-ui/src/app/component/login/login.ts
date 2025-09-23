@@ -27,7 +27,7 @@ export class Login {
 
   onSubmit() {
     if (this.LoginForm.valid) {
-      this.http.post('http://localhost:8080/api/login', this.LoginForm.value, { withCredentials: true })
+      this.http.post('https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/login', this.LoginForm.value, { withCredentials: true })
         .subscribe(
           response => {
             console.log('Login successful', response);

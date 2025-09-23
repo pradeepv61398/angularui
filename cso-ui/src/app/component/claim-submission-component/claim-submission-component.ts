@@ -47,7 +47,7 @@ selectedFile: File | null = null;
     this.authService.currentUser$.subscribe(user => {
       this.LoggedinUser = user;
       if (user?.id) {
-        this.http.get<any[]>(`http://localhost:8080/api/customer-policies/${user.id}`, { withCredentials: true })
+        this.http.get<any[]>(`https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies/${user.id}`, { withCredentials: true })
           .subscribe({
             next: data => this.customerPolicies = data,
             error: err => console.error('Error fetching customer policies', err)
@@ -158,7 +158,7 @@ submitClaim() {
       formData.append('files', file); // 'files' must match backend @RequestPart("files")
     });
 
-    this.http.post('http://localhost:8080/claims/submit', formData, { withCredentials: true })
+    this.http.post('https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/claims/submit', formData, { withCredentials: true })
       .subscribe({
         next: (response) => {
           this.message = 'Claim submitted successfully!';

@@ -32,7 +32,7 @@ ngOnInit(): void {
 }
 
 loadPolicies(): void {
-    this.policyService.viewpolicy().subscribe({
+    this.policyService.viewPolicy().subscribe({
       next: (data: Policy[]) => {
         this.policies = data;
       },
