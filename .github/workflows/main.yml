@@ -11,23 +11,55 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout code
       - uses: actions/checkout@v4
 
+      # 2️⃣ Setup Node.js
       - uses: actions/setup-node@v3
         with:
           node-version: '22.x'
 
+      # 3️⃣ Install Angular CLI
       - name: Install Angular CLI
         run: npm install -g @angular/cli
 
+      # 4️⃣ Install project dependencies
       - name: Install dependencies
         run: npm install
         working-directory: ./cso-ui
 
+      # 5️⃣ Build Angular app (production)
       - name: Build Angular app
         run: ng build --configuration production
         working-directory: ./cso-ui
 
+      # 6️⃣ Add web.config for Angular routing
+      - name: Add web.config for Azure
+        run: |
+          cat <<EOL > ./cso-ui/dist/cso-ui/web.config
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <system.webServer>
+              <rewrite>
+                <rules>
+                  <rule name="Angular Routes" stopProcessing="true">
+                    <match url=".*" />
+                    <conditions logicalGrouping="MatchAll">
+                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+                    </conditions>
+                    <action type="Rewrite" url="index.html" />
+                  </rule>
+                </rules>
+              </rewrite>
+              <staticContent>
+                <mimeMap fileExtension=".json" mimeType="application/json" />
+              </staticContent>
+            </system.webServer>
+          </configuration>
+          EOL
+
+      # 7️⃣ Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
