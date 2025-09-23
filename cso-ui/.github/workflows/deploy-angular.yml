@@ -36,9 +36,10 @@ jobs:
     needs: build
 
     steps:
-      - name: Deploy to Azure Web App
+      # 5️⃣ Login to Azure using Publish Profile
+      - name: Azure Login
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'angularui'  # Replace with your App Service name
+          app-name: 'angularui'  # Replace with your Azure App Service name
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./customer/dist/customer
+          package: ./cso-ui/dist/cso-ui
