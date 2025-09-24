@@ -23,16 +23,32 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  loadCurrentUser() {
-    this.http.get<User>('https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/me', { withCredentials: true })
-      .subscribe({
-        next: user => this.currentUserSubject.next(user),
-        error: err => {
-          this.currentUserSubject.next(null);
-          this.router.navigate(['/login']);
-        }
-      });
-  }
+  // loadCurrentUser() {
+  //   this.http.get<User>('https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/jwt/me', { withCredentials: true })
+  //     .subscribe({
+  //       next: user => this.currentUserSubject.next(user),
+  //       error: err => {
+  //         this.currentUserSubject.next(null);
+  //         this.router.navigate(['/login']);
+  //       }
+  //     });
+  // }
+loadCurrentUser() {
+  const token = localStorage.getItem('jwt'); 
+
+  this.http.get<User>(
+    'https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/jwt/me',
+    {
+      headers: { Authorization: `Bearer ${token}` } 
+    }
+  ).subscribe({
+    next: user => this.currentUserSubject.next(user),
+    error: err => {
+      this.currentUserSubject.next(null);
+      this.router.navigate(['/login']);
+    }
+  });
+}
 
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;

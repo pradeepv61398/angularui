@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -38,46 +38,66 @@ export class ClaimSubmissionComponent {
   customerPolicies: any[] = [];
   message!: string;
   LoggedinUser!: any;
-selectedFile: File | null = null;
+  selectedFile: File | null = null;
+  selectedFiles: File[] = [];
+  private tokenKey = 'jwt_token';
 
   constructor(private fb: FormBuilder, private http: HttpClient, private authService: AuthService) {}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem(this.tokenKey);
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
+  private getAuthHeadersForFormData(): HttpHeaders {
+    const token = localStorage.getItem(this.tokenKey);
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+      // Note: Don't set Content-Type for FormData - browser will set it automatically with boundary
+    });
+  }
 
   ngOnInit(): void {
     this.authService.loadCurrentUser();
     this.authService.currentUser$.subscribe(user => {
       this.LoggedinUser = user;
       if (user?.id) {
-        this.http.get<any[]>(`https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies/${user.id}`, { withCredentials: true })
-          .subscribe({
-            next: data => this.customerPolicies = data,
-            error: err => console.error('Error fetching customer policies', err)
-          });
+        this.http.get<any[]>(
+          `https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies/${user.id}`, 
+          { headers: this.getAuthHeaders() }
+        ).subscribe({
+          next: data => this.customerPolicies = data,
+          error: err => console.error('Error fetching customer policies', err)
+        });
       }
     });
 
-  this.claimForm = this.fb.group({
-  customerPolicyId: ['', Validators.required],
-  claimType: ['', Validators.required],
-  amount: ['', Validators.required],
-  reason: [''],
-  // Health fields
-  hospitalName: [''],
-  admissionDate: [''],
-  dischargeDate: [''],
-  patientName: [''],
-  doctorName: [''],
-  // Car fields
-  vehicleNumber: [''],
-  accidentDate: [''],
-  location: [''],
-  garageName: [''],
-  firNumber: [''],
-  // Life fields
-  nomineeName: [''],
-  relationship: [''],
-  deathCertificateNumber: [''],
-  dateOfDeath: ['']
-});
+    this.claimForm = this.fb.group({
+      customerPolicyId: ['', Validators.required],
+      claimType: ['', Validators.required],
+      amount: ['', Validators.required],
+      reason: [''],
+      // Health fields
+      hospitalName: [''],
+      admissionDate: [''],
+      dischargeDate: [''],
+      patientName: [''],
+      doctorName: [''],
+      // Car fields
+      vehicleNumber: [''],
+      accidentDate: [''],
+      location: [''],
+      garageName: [''],
+      firNumber: [''],
+      // Life fields
+      nomineeName: [''],
+      relationship: [''],
+      deathCertificateNumber: [''],
+      dateOfDeath: ['']
+    });
 
     this.claimForm.get('claimType')?.valueChanges.subscribe(type => {
       this.setValidatorsByType(type);
@@ -131,35 +151,35 @@ selectedFile: File | null = null;
     }
   }
 
-selectedFiles: File[] = []; // array to store multiple files
-
-// File change handler
-onFilesSelected(event: any) {
-  const files: FileList = event.target.files;
-  this.selectedFiles = [];
-  for (let i = 0; i < files.length; i++) {
-    this.selectedFiles.push(files[i]);
+  // File change handler for multiple files
+  onFilesSelected(event: any) {
+    const files: FileList = event.target.files;
+    this.selectedFiles = [];
+    for (let i = 0; i < files.length; i++) {
+      this.selectedFiles.push(files[i]);
+    }
   }
-}
 
-submitClaim() {
-  if (this.claimForm.valid) {
+  submitClaim() {
+    if (this.claimForm.valid) {
+      const claimData = { ...this.claimForm.value };
+      delete claimData['file']; // remove file key if it exists
 
-    const claimData = { ...this.claimForm.value };
-    delete claimData['file']; // remove file key if it exists
+      const formData = new FormData();
 
-    const formData = new FormData();
+      // Append claim JSON as a Blob
+      formData.append('claim', new Blob([JSON.stringify(claimData)], { type: 'application/json' }));
 
-    // Append claim JSON as a Blob
-    formData.append('claim', new Blob([JSON.stringify(claimData)], { type: 'application/json' }));
+      // Append all selected files
+      this.selectedFiles.forEach(file => {
+        formData.append('files', file); // 'files' must match backend @RequestPart("files")
+      });
 
-    // Append all selected files
-    this.selectedFiles.forEach(file => {
-      formData.append('files', file); // 'files' must match backend @RequestPart("files")
-    });
-
-    this.http.post('https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/claims/submit', formData, { withCredentials: true })
-      .subscribe({
+      this.http.post(
+        'https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/claims/submit', 
+        formData, 
+        { headers: this.getAuthHeadersForFormData() }
+      ).subscribe({
         next: (response) => {
           this.message = 'Claim submitted successfully!';
           this.claimForm.reset();
@@ -171,11 +191,8 @@ submitClaim() {
         }
       });
 
-  } else {
-    this.claimForm.markAllAsTouched();
+    } else {
+      this.claimForm.markAllAsTouched();
+    }
   }
-}
-
-
-
 }
