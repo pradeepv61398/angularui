@@ -27,7 +27,7 @@ export class Login {
 
   // onSubmit() {
   //   if (this.LoginForm.valid) {
-  //     this.http.post('https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/login', this.LoginForm.value, { withCredentials: true })
+  //     this.http.post('https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/api/login', this.LoginForm.value, { withCredentials: true })
   //       .subscribe(
   //         response => {
   //           console.log('Login successful', response);
@@ -47,7 +47,7 @@ export class Login {
   onSubmit() {
   if (this.LoginForm.valid) {
     this.http.post<{ token: string }>(
-      'https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/jwt/login',
+      'https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/jwt/login',
       this.LoginForm.value
     ).subscribe({
       next: response => {

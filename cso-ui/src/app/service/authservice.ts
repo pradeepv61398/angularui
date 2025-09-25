@@ -24,7 +24,7 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   // loadCurrentUser() {
-  //   this.http.get<User>('https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/jwt/me', { withCredentials: true })
+  //   this.http.get<User>('https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/jwt/me', { withCredentials: true })
   //     .subscribe({
   //       next: user => this.currentUserSubject.next(user),
   //       error: err => {
@@ -37,7 +37,7 @@ loadCurrentUser() {
   const token = localStorage.getItem('jwt'); 
 
   this.http.get<User>(
-    'https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/jwt/me',
+    'https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/jwt/me',
     {
       headers: { Authorization: `Bearer ${token}` } 
     }

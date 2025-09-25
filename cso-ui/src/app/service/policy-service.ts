@@ -7,22 +7,22 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PolicyService {
-  private baseUrl = 'https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies';
-  private tokenKey = 'jwt_token';
+  private baseUrl = 'https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/api/customer-policies';
+  
+  
 
   constructor(private http: HttpClient) {}
 
   private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem(this.tokenKey);
+   const token = localStorage.getItem('jwt'); 
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Authorization': `Bearer ${token}`
     });
   }
 
   createPolicy(policy: Policy): Observable<any> {
     return this.http.post(
-      "https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/policy/createPolicy", 
+      "https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/policy/createPolicy", 
       policy, 
       { headers: this.getAuthHeaders() }
     );
@@ -30,14 +30,14 @@ export class PolicyService {
 
   viewPolicy(): Observable<Policy[]> {
     return this.http.get<Policy[]>(
-      "https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/policy/getAllPolices", 
+      "https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/policy/getAllPolices", 
       { headers: this.getAuthHeaders() }
     );
   }
 
   buyPolicy(customerId: number, policyId: number): Observable<any> {
     return this.http.post(
-      `https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies/buy?customerId=${customerId}&policyId=${policyId}`,
+      `https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/api/customer-policies/buy?customerId=${customerId}&policyId=${policyId}`,
       {}, // empty body
       { headers: this.getAuthHeaders() }
     );
@@ -45,7 +45,7 @@ export class PolicyService {
 
   getAllCustomerPolicies(customerId: number): Observable<Policy[]> {
     return this.http.get<Policy[]>(
-      `https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies/${customerId}`,
+      `https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/api/customer-policies/${customerId}`,
       { headers: this.getAuthHeaders() }
     );
   }
@@ -84,7 +84,7 @@ export interface PolicyPayment {
 //   providedIn: 'root'
 // })
 // export class PolicyService {
-//     private baseUrl = 'https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies';
+//     private baseUrl = 'https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/api/customer-policies';
 
 //   constructor(
 //     private http: HttpClient
@@ -92,11 +92,11 @@ export interface PolicyPayment {
 
 //   }
 //   createPolicy(policy: Policy) {
-//     return this.http.post("https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/policy/createPolicy", policy, { withCredentials: true });
+//     return this.http.post("https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/policy/createPolicy", policy, { withCredentials: true });
 
 //   }
 //   viewPolicy() {
-//     return this.http.get<Policy[]>("https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/policy/getAllPolices", { withCredentials: true });
+//     return this.http.get<Policy[]>("https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/policy/getAllPolices", { withCredentials: true });
 
 //   }
 //   // buyPolicy(policyId: number){
@@ -106,14 +106,14 @@ export interface PolicyPayment {
 
 // buyPolicy(customerId: number, policyId: number) {
 //   return this.http.post(
-//     `https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies/buy?customerId=${customerId}&policyId=${policyId}`,
+//     `https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/api/customer-policies/buy?customerId=${customerId}&policyId=${policyId}`,
 //     {}, // empty body
 //     { withCredentials: true }
 //   );
 // }
 //   getAllCustomerPolicies(customerId: number) {
 //   return this.http.get<Policy[]>(
-//     `https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies/${customerId}`,
+//     `https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/api/customer-policies/${customerId}`,
 //     { withCredentials: true }
 //   );
 

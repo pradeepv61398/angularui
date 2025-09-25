@@ -66,7 +66,7 @@ export class ClaimSubmissionComponent {
       this.LoggedinUser = user;
       if (user?.id) {
         this.http.get<any[]>(
-          `https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/api/customer-policies/${user.id}`, 
+          `https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/api/customer-policies/${user.id}`, 
           { headers: this.getAuthHeaders() }
         ).subscribe({
           next: data => this.customerPolicies = data,
@@ -176,7 +176,7 @@ export class ClaimSubmissionComponent {
       });
 
       this.http.post(
-        'https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/claims/submit', 
+        'https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/claims/submit', 
         formData, 
         { headers: this.getAuthHeadersForFormData() }
       ).subscribe({

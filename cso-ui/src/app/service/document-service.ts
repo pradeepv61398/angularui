@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DocumentService {
-  private baseUrl = 'https://insuranceportal-cmcudyhtbqh7djh2.canadacentral-01.azurewebsites.net/documents';
+  private baseUrl = 'https://frontend-cwdpc4gsgyfna2g5.z02.azurefd.net/documents';
 
   constructor(private http: HttpClient) { }
 
